@@ -127,7 +127,6 @@ $(UBOOT_BIN): $(UBOOT_OUT)
 		UBOOT_CONFIG=`echo $$ubootplat | cut -d':' -f2`; \
 		$(MAKE) -C $(UBOOT_IMX_PATH)/uboot-imx/ CROSS_COMPILE="$(UBOOT_CROSS_COMPILE_WRAPPER)" distclean; \
 		$(MAKE) -C $(UBOOT_IMX_PATH)/uboot-imx/ CROSS_COMPILE="$(UBOOT_CROSS_COMPILE_WRAPPER)" O=$(realpath $(UBOOT_OUT)) $$UBOOT_CONFIG; \
-		$(MAKE) -C $(UBOOT_IMX_PATH)/uboot-imx/ CROSS_COMPILE="$(UBOOT_CROSS_COMPILE_WRAPPER)" mrproper; \
 		$(MAKE) -s -C $(UBOOT_IMX_PATH)/uboot-imx/ CROSS_COMPILE="$(UBOOT_CROSS_COMPILE_WRAPPER)" O=$(realpath $(UBOOT_OUT)) || exit 1; \
 		install -D $(UBOOT_OUT)/SPL $(PRODUCT_OUT)/u-boot-$$UBOOT_PLATFORM.SPL; \
 		install -D $(UBOOT_OUT)/u-boot.img $(PRODUCT_OUT)/u-boot-$$UBOOT_PLATFORM.img; \
