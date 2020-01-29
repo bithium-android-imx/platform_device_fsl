@@ -146,7 +146,6 @@ endef
 
 $(KERNEL_BIN): $(KERNEL_CONFIG) $(TARGET_KERNEL_SRC) | $(KERNEL_OUT)
 	$(hide) echo "Building $(KERNEL_ARCH) $(KERNEL_VERSION) kernel ..."
-	$(hide) PATH=$$PATH $(MAKE) -C $(TARGET_KERNEL_SRC) mrproper
 	$(call build_kernel,$(KERNEL_NAME))
 	$(call build_kernel,modules)
 
