@@ -15,8 +15,6 @@
 TARGET_KERNEL_ARCH := $(strip $(TARGET_KERNEL_ARCH))
 TARGET_KERNEL_SRC := $(KERNEL_IMX_PATH)/kernel_imx
 KERNEL_CC_WRAPPER := $(CC_WRAPPER)
-KERNEL_AFLAGS :=
-KERNEL_CFLAGS :=
 
 ifeq ($(TARGET_KERNEL_ARCH), arm)
 KERNEL_TOOLCHAIN_ABS := $(realpath prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin)
