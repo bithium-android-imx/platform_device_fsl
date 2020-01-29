@@ -1,6 +1,10 @@
+PRODUCT_IMX_TELEPHONY ?= true
+
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/generic_no_telephony.mk)
+ifeq ($(PRODUCT_IMX_TELEPHONY),true)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony.mk)
+endif
 
 ifeq ($(PRODUCT_IMX_CAR),true)
 $(call inherit-product, packages/services/Car/car_product/build/car.mk)
@@ -154,7 +158,7 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     bt_vendor.conf
- 
+
 # FUSE based emulated sdcard daemon
 PRODUCT_PACKAGES += \
     sdcard
