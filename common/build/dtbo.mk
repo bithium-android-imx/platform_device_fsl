@@ -47,6 +47,8 @@ DTS_SRC :=
 $(foreach dts_config,$(TARGET_BOARD_DTS_CONFIG), \
     $(eval DTS_SRC += $(addprefix $(DTS_PATH),$(shell echo ${dts_config} | cut -d':' -f2 | sed 's/dtb/dts/g' ))))
 
+DTB_SRCS := $(foreach dtb_config,$(TARGET_BOARD_DTS_CONFIG),$(shell echo ${dtb_config} | cut -d':' -f2))
+
 define build_dtb
 	CCACHE_NODIRECT="true" $(MAKE) -C $(TARGET_KERNEL_SRC) \
 	O=$(realpath $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ) \
@@ -54,7 +56,7 @@ define build_dtb
 	CROSS_COMPILE="$(KERNEL_CROSS_COMPILE_WRAPPER)" \
 	KCFLAGS="$(KERNEL_CFLAGS)" \
 	KAFLAGS="$(KERNEL_AFLAGS)" \
-	$(TARGET_BOARD_DTS_CONFIG)
+	$(DTB_SRCS)
 endef
 
 $(BOARD_PREBUILT_DTBOIMAGE): $(KERNEL_BIN) $(DTS_SRC) | $(MKDTIMG) $(AVBTOOL)
