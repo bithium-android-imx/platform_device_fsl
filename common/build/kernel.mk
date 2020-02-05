@@ -152,6 +152,11 @@ $(KERNEL_BIN): $(KERNEL_CONFIG) $(TARGET_KERNEL_SRC) | $(KERNEL_OUT)
 $(KERNEL_OUT)/vmlinux: $(KERNEL_BIN)
 	@true
 
+.PHONY: clean-kernel
+clean-kernel:
+	$(hide) echo "Cleaning $(KERNEL_ARCH) $(KERNEL_VERSION) kernel ..."
+	$(call build_kernel,mrproper)
+
 $(KERNEL_MODULES_INSTALL): $(KERNEL_BIN)
 	$(hide) echo "Installing kernel modules ..."
 
