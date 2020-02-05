@@ -125,7 +125,6 @@ $(UBOOT_BIN): $(UBOOT_OUT)
 	for ubootplat in $(TARGET_BOOTLOADER_CONFIG); do \
 		UBOOT_PLATFORM=`echo $$ubootplat | cut -d':' -f1`; \
 		UBOOT_CONFIG=`echo $$ubootplat | cut -d':' -f2`; \
-		$(MAKE) -C $(UBOOT_IMX_PATH)/uboot-imx/ CROSS_COMPILE="$(UBOOT_CROSS_COMPILE_WRAPPER)" distclean; \
 		$(MAKE) -C $(UBOOT_IMX_PATH)/uboot-imx/ CROSS_COMPILE="$(UBOOT_CROSS_COMPILE_WRAPPER)" O=$(realpath $(UBOOT_OUT)) $$UBOOT_CONFIG; \
 		$(MAKE) -s -C $(UBOOT_IMX_PATH)/uboot-imx/ CROSS_COMPILE="$(UBOOT_CROSS_COMPILE_WRAPPER)" O=$(realpath $(UBOOT_OUT)) || exit 1; \
 		install -D $(UBOOT_OUT)/SPL $(PRODUCT_OUT)/u-boot-$$UBOOT_PLATFORM.SPL; \
@@ -135,6 +134,9 @@ $(UBOOT_BIN): $(UBOOT_OUT)
 .PHONY: $(UBOOT_BIN)
 
 bootloader: $(UBOOT_BIN)
+clean-bootloader:
+		$(MAKE) -C $(UBOOT_IMX_PATH)/uboot-imx/ CROSS_COMPILE="$(UBOOT_CROSS_COMPILE_WRAPPER)" O=$(realpath $(UBOOT_OUT)) distclean
+		rm -f $(PRODUCT_OUT)/u-boot-*.{SPL,img}
 
 ifneq ($(TARGET_UBOOT_ENV),)
 $(UBOOT_ENV_OUT): $(TARGET_UBOOT_ENV) | $(UBOOT_BIN)
