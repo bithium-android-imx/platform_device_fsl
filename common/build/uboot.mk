@@ -47,8 +47,15 @@ $(error If TARGET_UBOOT_ENV is set TARGET_UBOOT_ENV_SIZE must also be set. See\
 endif
 endif
 
+UBOOT_PLATFORM := $(shell echo '$(TARGET_BOOTLOADER_CONFIG)' | cut -d':' -f1)
+UBOOT_CONFIG := $(shell echo '$(TARGET_BOOTLOADER_CONFIG)' | cut -d':' -f2)
+
 # TARGET_UBOOT_BUILD_TARGET may be assigned in target BoardConfig.mk.
+ifeq (,$(UBOOT_PLATFORM))
 TARGET_UBOOT_BUILD_TARGET ?= u-boot.img
+else
+TARGET_UBOOT_BUILD_TARGET ?= u-boot-$(UBOOT_PLATFORM).img
+endif
 
 # Check target arch.
 TARGET_UBOOT_ARCH := $(strip $(TARGET_UBOOT_ARCH))
@@ -120,18 +127,17 @@ $(UBOOT_OUT):
 	mkdir -p $@
 endif
 
-$(UBOOT_BIN): $(UBOOT_OUT)
-	$(hide) echo "Building $(UBOOT_ARCH) $(UBOOT_VERSION) U-Boot ..."
-	for ubootplat in $(TARGET_BOOTLOADER_CONFIG); do \
-		UBOOT_PLATFORM=`echo $$ubootplat | cut -d':' -f1`; \
-		UBOOT_CONFIG=`echo $$ubootplat | cut -d':' -f2`; \
-		$(MAKE) -C $(UBOOT_IMX_PATH)/uboot-imx/ CROSS_COMPILE="$(UBOOT_CROSS_COMPILE_WRAPPER)" O=$(realpath $(UBOOT_OUT)) $$UBOOT_CONFIG; \
-		$(MAKE) -s -C $(UBOOT_IMX_PATH)/uboot-imx/ CROSS_COMPILE="$(UBOOT_CROSS_COMPILE_WRAPPER)" O=$(realpath $(UBOOT_OUT)) || exit 1; \
-		install -D $(UBOOT_OUT)/SPL $(PRODUCT_OUT)/u-boot-$$UBOOT_PLATFORM.SPL; \
-		install -D $(UBOOT_OUT)/u-boot.img $(PRODUCT_OUT)/u-boot-$$UBOOT_PLATFORM.img; \
-	done
+$(UBOOT_OUT)/.config: $(UBOOT_IMX_PATH)/uboot-imx/configs/$(UBOOT_CONFIG) | $(UBOOT_OUT)
+	$(hide) echo "Confinguring $(UBOOT_ARCH) $(UBOOT_VERSION) U-Boot ..."
+	$(MAKE) -C $(UBOOT_IMX_PATH)/uboot-imx/ CROSS_COMPILE="$(UBOOT_CROSS_COMPILE_WRAPPER)" O=$(realpath $(UBOOT_OUT)) $(UBOOT_CONFIG)
 
-.PHONY: $(UBOOT_BIN)
+$(UBOOT_BIN): $(UBOOT_OUT)/.config | $(UBOOT_OUT)
+		$(hide) echo "Building $(UBOOT_ARCH) $(UBOOT_VERSION) U-Boot ..."
+		$(MAKE) -C $(UBOOT_IMX_PATH)/uboot-imx/ CROSS_COMPILE="$(UBOOT_CROSS_COMPILE_WRAPPER)" O=$(realpath $(UBOOT_OUT))
+		install -D $(UBOOT_OUT)/SPL $(PRODUCT_OUT)/u-boot-$(UBOOT_PLATFORM).SPL
+		install -D $(UBOOT_OUT)/u-boot.img $(PRODUCT_OUT)/u-boot-$(UBOOT_PLATFORM).img
+
+# .PHONY: $(UBOOT_BIN)
 
 bootloader: $(UBOOT_BIN)
 clean-bootloader:
