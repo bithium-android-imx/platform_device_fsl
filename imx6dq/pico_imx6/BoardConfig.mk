@@ -38,24 +38,25 @@ TARGET_DTB_POSTFIX := -dtb
 USE_OPENGL_RENDERER := true
 TARGET_CPU_SMP := true
 
-BOARD_WLAN_DEVICE            := qcwcn
-WPA_SUPPLICANT_VERSION       := VER_0_8_X
-BOARD_WPA_SUPPLICANT_DRIVER  := NL80211
-BOARD_HOSTAPD_DRIVER         := NL80211
+BOARD_WLAN_DEVICE            ?= qcwcn
+WPA_SUPPLICANT_VERSION       ?= VER_0_8_X
+BOARD_WPA_SUPPLICANT_DRIVER  ?= NL80211
+BOARD_HOSTAPD_DRIVER         ?= NL80211
 
+ifeq ($(BOARD_WLAN_DEVICE),qcwcn)
 BOARD_HOSTAPD_PRIVATE_LIB               := lib_driver_cmd_qcwcn
 BOARD_WPA_SUPPLICANT_PRIVATE_LIB        := lib_driver_cmd_qcwcn
 
 # QCA qcacld wifi driver module
 BOARD_VENDOR_KERNEL_MODULES += \
   $(KERNEL_OUT)/drivers/net/wireless/qcacld-2.0/wlan.ko
+endif
 
-
-#for accelerator sensor, need to define sensor type here
-BOARD_HAS_SENSOR := true
-SENSOR_MMA8451 := false
-BOARD_USE_SENSOR_PEDOMETER := false
-BOARD_USE_LEGACY_SENSOR := true
+# For accelerator sensor, need to define sensor type here
+BOARD_HAS_SENSOR ?= true
+SENSOR_MMA8451 ?= false
+BOARD_USE_SENSOR_PEDOMETER ?= false
+BOARD_USE_LEGACY_SENSOR ?= true
 
 # for recovery service
 TARGET_SELECT_KEY := 28
@@ -63,19 +64,22 @@ TARGET_SELECT_KEY := 28
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := false
 
 # camera hal v3
-IMX_CAMERA_HAL_V3 := true
+IMX_CAMERA_HAL_V3 ?= true
 
-BOARD_HAVE_USB_CAMERA := true
+BOARD_HAVE_USB_CAMERA ?= true
 
+ifeq ($(BOARD_HAVE_BLUETOOTH),true)
 # Qcom 1CQ(QCA6174) BT
-BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(IMX_DEVICE_PATH)/bluetooth
+BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR ?= $(IMX_DEVICE_PATH)/bluetooth
 
-BOARD_HAVE_BLUETOOTH_QCOM := true
-BOARD_HAS_QCA_BT_ROME := true
-BOARD_HAVE_BLUETOOTH_BLUEZ := false
-QCOM_BT_USE_SIBS := true
+BOARD_HAVE_BLUETOOTH_QCOM ?= true
+BOARD_HAS_QCA_BT_ROME ?= true
+BOARD_HAVE_BLUETOOTH_BLUEZ ?= false
+QCOM_BT_USE_SIBS ?= true
+
 ifeq ($(QCOM_BT_USE_SIBS), true)
 WCNSS_FILTER_USES_SIBS := false
+endif
 endif
 
 USE_ION_ALLOCATOR := true
